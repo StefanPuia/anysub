@@ -1,7 +1,7 @@
 {
   "name": "anysub",
   "license": "MIT",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "scripts": {
     "build": "yarn run barrels && tsc --project tsconfig.compile.json",
