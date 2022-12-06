@@ -38,7 +38,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git remote set-url origin git@github.com:StefanPuia/anysub.git
       - name: Attach SSH key
-        uses: webfactory/ssh-agent@v0.5.4
+        uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
       - run: yarn install
