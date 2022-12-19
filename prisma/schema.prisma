@@ -15,29 +15,72 @@ generator tsed {
   output   = "../src/generated/prisma"
 }
 
-model User {
-  id                      String                    @id @default(uuid())
-  email                   String                    @unique
-  name                    String?
-  singleHtmlElementLookup SingleHtmlElementLookup[]
+enum HtmlSelectorType {
+  CSS
+  XPATH
 }
 
-model LookupMeta {
-  id                      String                   @id @default(uuid())
-  enabled                 Boolean                  @default(false)
-  name                    String
-  frequency               Int                      @default(60) // number of minutes
-  singleHtmlElementLookup SingleHtmlElementLookup?
+model User {
+  id    String  @id @default(uuid())
+  email String  @unique
+  name  String?
+
+  SingleHtmlElementLookup   SingleHtmlElementLookup[]
+  MultipleHtmlElementLookup MultipleHtmlElementLookup[]
 }
+
+model LookupState {
+  id Int @id @default(autoincrement())
+
+  runTime DateTime? @updatedAt()
+  state   Json
+
+  SingleHtmlElementLookup   SingleHtmlElementLookup[]
+  MultipleHtmlElementLookup MultipleHtmlElementLookup[]
+}
+
+//// Lookup Meta
+// id        String  @id @default(uuid())
+// enabled   Boolean @default(false)
+// name      String
+// frequency Int     @default(60) // number of minutes
 
 model SingleHtmlElementLookup {
-  id           String     @id @default(uuid())
+  // meta
+  id        String  @id @default(uuid())
+  enabled   Boolean @default(false)
+  name      String
+  frequency Int     @default(60) // number of minutes
+
   url          String
   selector     String
-  selectorType String     @default("CSS")
+  selectorType HtmlSelectorType @default(CSS)
   expression   String?
-  meta         LookupMeta @relation(fields: [lookupMetaId], references: [id])
-  lookupMetaId String     @unique
-  user         User       @relation(fields: [userId], references: [id])
-  userId       String
+
+  userId        String
+  lookupStateId Int?
+
+  user  User         @relation(fields: [userId], references: [id])
+  state LookupState? @relation(fields: [lookupStateId], references: [id])
+}
+
+model MultipleHtmlElementLookup {
+  // meta
+  id        String  @id @default(uuid())
+  enabled   Boolean @default(false)
+  name      String
+  frequency Int     @default(60) // number of minutes
+
+  url                   String
+  containerSelector     String
+  containerSelectorType HtmlSelectorType @default(CSS)
+  selector              String
+  selectorType          HtmlSelectorType @default(CSS)
+  expression            String?
+
+  userId        String
+  lookupStateId Int?
+
+  user  User         @relation(fields: [userId], references: [id])
+  state LookupState? @relation(fields: [lookupStateId], references: [id])
 }
